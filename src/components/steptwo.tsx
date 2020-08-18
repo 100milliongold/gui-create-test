@@ -1,33 +1,27 @@
 import { Text, View, Button, useEventHandler } from "@nodegui/react-nodegui";
 import { QPushButtonSignals } from "@nodegui/nodegui";
-import React from "react";
+import React, { useState } from "react";
 import open from "open";
+import { test } from "./test";
 
 export function StepTwo() {
+  const [json, setJson] = useState("");
+
   const btnHandler = useEventHandler<QPushButtonSignals>(
     {
-      clicked: () => open("https://react.nodegui.org").catch(console.log)
+      clicked: () => open("https://react.nodegui.org").catch(console.log),
     },
     []
   );
+
+  test().then((res) => {
+    setJson(`${res.length}`);
+  });
+
   return (
     <View style={containerStyle}>
       <Text style={textStyle} wordWrap={true}>
-        {`
-          <ol>
-            <li>
-                Open chrome and navigate to chrome://inspect. You should see a target below with your app.
-            </li>
-            <br/>
-              <li>
-                  Next click on  "Open dedicated DevTools for Node"
-              </li>
-              <br/>
-            <li>
-                On the dedicated devtools. Click on Source > Node > "Your node process"
-            </li>
-          </ol>
-        `}
+        {json}
       </Text>
       <Button
         style={btnStyle}
