@@ -1,11 +1,14 @@
 const LOGIN = "login/LOGIN" as const;
+const LOGOUT = "login/LOGOUT" as const;
 
 export const login = (login: LoginState) => ({
   type: LOGIN,
   login,
 });
 
-type LoginAction = ReturnType<typeof login>;
+export const logout = () => ({ type: LOGOUT });
+
+type LoginAction = ReturnType<typeof login> | ReturnType<typeof logout>;
 
 export interface LoginState {
   id: string;
@@ -24,11 +27,17 @@ const initialState: LoginState = {
 export function index(state: LoginState = initialState, action: LoginAction) {
   switch (action.type) {
     case LOGIN:
+      const { login } = action;
       return {
-        id: state.id,
-        pw: state.pw,
-        galleryName: state.galleryName,
-        login: true,
+        id: login.id,
+        pw: login.pw,
+        galleryName: login.galleryName,
+        login: login.login,
+      };
+    case LOGOUT:
+      return {
+        ...state,
+        login: false,
       };
     default:
       return state;

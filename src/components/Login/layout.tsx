@@ -14,22 +14,23 @@ type layoutProps = {
 };
 
 export default function layout({ onLogin }: layoutProps) {
-  const [id, setId] = useState("");
-  const [pw, setPw] = useState("");
-  const [galleryName, setGalleryName] = useState("");
+  const [id, setId] = useState<string>("");
+  const [pw, setPw] = useState<string>("");
+  const [galleryName, setGalleryName] = useState<string>("");
 
   const btnHandler = useEventHandler<QPushButtonSignals>(
     {
       clicked: (...e) => {
-        onLogin({
+        const res = {
           id: id,
           pw: pw,
           galleryName: galleryName,
           login: true,
-        });
+        };
+        onLogin(res);
       },
     },
-    []
+    [id, pw, galleryName]
   );
 
   const idChangeHandler = useEventHandler<QLineEditSignals>(
@@ -38,7 +39,7 @@ export default function layout({ onLogin }: layoutProps) {
         setId(text);
       },
     },
-    []
+    [id]
   );
 
   const pwChangeHandler = useEventHandler<QLineEditSignals>(
@@ -47,7 +48,7 @@ export default function layout({ onLogin }: layoutProps) {
         setPw(text);
       },
     },
-    []
+    [pw]
   );
 
   const galleryNameChangeHandler = useEventHandler<QLineEditSignals>(
@@ -56,7 +57,7 @@ export default function layout({ onLogin }: layoutProps) {
         setGalleryName(text);
       },
     },
-    []
+    [galleryName]
   );
 
   return (
