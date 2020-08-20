@@ -3,11 +3,10 @@ import React from "react";
 import { QIcon } from "@nodegui/nodegui";
 import nodeguiIcon from "../assets/nodegui.jpg";
 
-import Login from "./components/Login";
-
 import { createStore } from "redux";
 import { Provider } from "react-redux";
 import rootReducer from "./modules";
+import MainPage from "./containers/MainPage";
 const store = createStore(rootReducer);
 
 const minSize = { width: 500, height: 520 };
@@ -23,8 +22,7 @@ class App extends React.Component {
           styleSheet={styleSheet}
         >
           <View style={containerStyle}>
-            <Text id="welcome-text">랜덤 글 가져오기!</Text>
-            <Login />
+            <MainPage />
           </View>
         </Window>
       </Provider>

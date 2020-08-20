@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
-import login from "./login";
+import youtube from "./youtube";
 
 const rootReducer = combineReducers({
-  login,
+  youtube,
 });
 
 export default rootReducer;
