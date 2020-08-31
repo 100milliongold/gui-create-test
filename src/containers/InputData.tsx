@@ -6,11 +6,16 @@ import {
   useEventHandler,
   Text,
 } from "@nodegui/react-nodegui";
+
+import { QFileDialog } from "@nodegui/nodegui"
+
+
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../modules";
 import { Youtube, updateData, pageName } from "../modules/youtube";
 
 import { QPushButtonSignals, QLineEditSignals } from "@nodegui/nodegui";
+
 
 export default function InputData() {
   const dispatch = useDispatch();
@@ -55,7 +60,7 @@ export default function InputData() {
 
   return (
     <View>
-      <Text id="welcome-text">랜덤 글 가져오기!</Text>
+      <Text id="welcome-text">유투브 이미지 다운로드 테스트</Text>
       <LineEdit on={idChangeHandler} placeholderText={"유투브 아이디 입력"} />
       <LineEdit on={fileNameChangeHandler} placeholderText={"파일명 입력"} />
       <Button text={`시작!`} on={submitHandler} />
