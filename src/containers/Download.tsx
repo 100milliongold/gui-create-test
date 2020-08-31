@@ -17,7 +17,7 @@ export default function Download() {
   //   });
 
   const youtubeInfo = useSelector((state: RootState) => state.youtube);
-  const { id, fileName } = youtubeInfo;
+  const { id, filePath } = youtubeInfo;
   const resetHandler = useEventHandler<QPushButtonSignals>(
     {
       clicked: () => {
@@ -29,7 +29,7 @@ export default function Download() {
 
   useEffect(() => {
     const result = ytdl(`http://www.youtube.com/watch?v=${id}`).pipe(
-      fs.createWriteStream(fileName)
+      fs.createWriteStream(`${filePath}/${id}.mp4`)
     );
     result.on("close", () => {
       console.log("end");

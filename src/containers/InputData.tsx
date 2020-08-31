@@ -7,38 +7,42 @@ import {
   Text,
 } from "@nodegui/react-nodegui";
 
-import { QFileDialog } from "@nodegui/nodegui"
-
-
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../modules";
-import { Youtube, updateData, pageName } from "../modules/youtube";
+import {
+  Youtube,
+  updateData,
+  setId,
+  setFilePath,
+  mode,
+} from "../modules/youtube";
 
-import { QPushButtonSignals, QLineEditSignals } from "@nodegui/nodegui";
-
+import {
+  QPushButtonSignals,
+  QLineEditSignals,
+  QFileDialog,
+  FileMode,
+} from "@nodegui/nodegui";
 
 export default function InputData() {
   const dispatch = useDispatch();
-  const [id, setId] = useState<string | undefined>("");
-  const [fileName, setFileName] = useState<string | undefined>("");
 
+  const youtubeInfo = useSelector((state: RootState) => state.youtube);
+  const { id, filePath } = youtubeInfo;
   const update = (data: Youtube) => {
     dispatch(updateData(data));
+  };
+  const set_file_path = (filePath: string) => {
+    dispatch(setFilePath(filePath));
+  };
+  const set_id = (id: string) => {
+    dispatch(setId(id));
   };
 
   const idChangeHandler = useEventHandler<QLineEditSignals>(
     {
       textChanged: (text) => {
-        setId(text);
-      },
-    },
-    [id]
-  );
-
-  const fileNameChangeHandler = useEventHandler<QLineEditSignals>(
-    {
-      textChanged: (text) => {
-        setFileName(text);
+        set_id(text);
       },
     },
     [id]
@@ -49,21 +53,75 @@ export default function InputData() {
       clicked: (e) => {
         const res = {
           id,
-          fileName,
-          pageName: pageName.Download,
+          filePath,
+          mode: mode.Download,
         };
         update(res);
       },
     },
-    [id, fileName]
+    [id, filePath]
+  );
+
+  const fileHandler = useEventHandler<QPushButtonSignals>(
+    {
+      clicked: (e) => {
+        const fileDialog = new QFileDialog();
+        fileDialog.setFileMode(FileMode.Directory);
+        fileDialog.exec();
+        const selectedDirectory = fileDialog.selectedFiles();
+        if (selectedDirectory.length > 0) {
+          set_file_path(selectedDirectory[0]);
+        }
+      },
+    },
+    [filePath]
   );
 
   return (
     <View>
-      <Text id="welcome-text">유투브 이미지 다운로드 테스트</Text>
-      <LineEdit on={idChangeHandler} placeholderText={"유투브 아이디 입력"} />
-      <LineEdit on={fileNameChangeHandler} placeholderText={"파일명 입력"} />
-      <Button text={`시작!`} on={submitHandler} />
+      <View style="border: 1px solid blue;">
+        <Text id="welcome-text">유투브 이미지 다운로드 테스트</Text>
+      </View>
+      <View
+        style={`
+            display: flex;
+            flex-direction:row;
+            border: 1px solid red;
+        `}
+      >
+        <View>
+          <LineEdit
+            on={idChangeHandler}
+            placeholderText={"유투브 아이디 입력"}
+          />
+          <View style={fileStyle}>
+            <LineEdit
+              placeholderText={"저장경로 입력"}
+              text={filePath}
+              readOnly
+            />
+            <Button text={`파일 선택`} on={fileHandler} />
+          </View>
+        </View>
+        <View>
+          <Button
+            text={`시작!`}
+            on={submitHandler}
+            style={`
+            width: 100%;
+            height: 100%;
+        `}
+          />
+        </View>
+      </View>
+      <View style="border: 1px solid green;">
+        <Text>테이블 부분</Text>
+      </View>
     </View>
   );
 }
+
+const fileStyle = `
+  display: flex;
+  flex-direction:row;
+`;
