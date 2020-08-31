@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useEffect } from "react";
 import {
   View,
   LineEdit,
@@ -22,11 +22,16 @@ import {
   QLineEditSignals,
   QFileDialog,
   FileMode,
+  QTableView,
+  QTableWidget,
+  QTableWidgetItem,
+  QWidget,
+  QMainWindow,
 } from "@nodegui/nodegui";
 
 export default function InputData() {
   const dispatch = useDispatch();
-
+  const test = useRef<QWidget>();
   const youtubeInfo = useSelector((state: RootState) => state.youtube);
   const { id, filePath } = youtubeInfo;
   const update = (data: Youtube) => {
@@ -77,6 +82,10 @@ export default function InputData() {
     [filePath]
   );
 
+  const setTable = (e: any) => {
+    console.log(e);
+  };
+
   return (
     <View>
       <View style="border: 1px solid blue;">
@@ -116,6 +125,7 @@ export default function InputData() {
       </View>
       <View style="border: 1px solid green;">
         <Text>테이블 부분</Text>
+        <View ref={test} style="width: 100%; height : 100%;"></View>
       </View>
     </View>
   );
