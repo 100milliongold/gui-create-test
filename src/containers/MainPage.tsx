@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../modules";
 
-import { mode } from "../modules/youtube";
+import { YOUTUBE_MODE } from "../modules/youtube";
 
 import InputData from "./InputData";
 import Download from "./Download";
@@ -12,8 +12,8 @@ export default function MainPage() {
 
   return (
     <>
-      {youtubeInfo.mode === mode.InputData && <InputData />}
-      {youtubeInfo.mode === mode.Download && <Download />}
+      {youtubeInfo.mode === YOUTUBE_MODE.InputData && <InputData />}
+      {youtubeInfo.mode === YOUTUBE_MODE.Download && <Download />}
     </>
   );
 }

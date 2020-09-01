@@ -33,7 +33,7 @@ type YoutubeAction =
   | ReturnType<typeof setId>
   | ReturnType<typeof resetData>;
 
-export enum mode {
+export enum YOUTUBE_MODE {
   InputData = "INPUT",
   Download = "DOWNLOAD",
 }
@@ -41,13 +41,13 @@ export enum mode {
 export interface Youtube {
   id: string | undefined;
   filePath: string | undefined;
-  mode: mode;
+  mode: YOUTUBE_MODE;
 }
 
 const initialState: Youtube = {
   id: "",
   filePath: "",
-  mode: mode.InputData,
+  mode: YOUTUBE_MODE.InputData,
 };
 
 export function Index(state: Youtube = initialState, action: YoutubeAction) {

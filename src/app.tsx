@@ -6,7 +6,7 @@ import nodeguiIcon from "../assets/nodegui.jpg";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
 import rootReducer from "./modules";
-import MainPage from "./containers/MainPage";
+import InputData from "./containers/InputData";
 const store = createStore(rootReducer);
 
 const minSize = { width: 500, height: 520 };
@@ -22,7 +22,7 @@ class App extends React.Component {
           styleSheet={styleSheet}
         >
           <View style={containerStyle}>
-            <MainPage />
+            <InputData />
           </View>
         </Window>
       </Provider>

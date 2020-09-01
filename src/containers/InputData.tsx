@@ -1,90 +1,52 @@
 import React, { useRef, useEffect } from "react";
-import {
-  View,
-  LineEdit,
-  Button,
-  useEventHandler,
-  Text,
-} from "@nodegui/react-nodegui";
+import { View, Text } from "@nodegui/react-nodegui";
 
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../modules";
-import {
-  Youtube,
-  updateData,
-  setId,
-  setFilePath,
-  mode,
-} from "../modules/youtube";
+import { Youtube, YOUTUBE_MODE, updateData } from "../modules/youtube";
 
-import {
-  QPushButtonSignals,
-  QLineEditSignals,
-  QFileDialog,
-  FileMode,
-  QTableView,
-  QTableWidget,
-  QTableWidgetItem,
-  QWidget,
-  QMainWindow,
-} from "@nodegui/nodegui";
+import InputYoutubeId from "../components/InputYoutubeId";
+import SetSaveFileSelect from "../components/SetSaveFileSelect";
+import SubmitButton from "../components/SubmitButton";
+
+import ytdl from "ytdl-core";
+const fs = require("fs");
+
+const prism = require("prism-media");
 
 export default function InputData() {
-  const dispatch = useDispatch();
-  const test = useRef<QWidget>();
   const youtubeInfo = useSelector((state: RootState) => state.youtube);
-  const { id, filePath } = youtubeInfo;
+  const { id, filePath, mode } = youtubeInfo;
+
+  const dispatch = useDispatch();
+
   const update = (data: Youtube) => {
     dispatch(updateData(data));
   };
-  const set_file_path = (filePath: string) => {
-    dispatch(setFilePath(filePath));
-  };
-  const set_id = (id: string) => {
-    dispatch(setId(id));
-  };
 
-  const idChangeHandler = useEventHandler<QLineEditSignals>(
-    {
-      textChanged: (text) => {
-        set_id(text);
-      },
-    },
-    [id]
-  );
+  useEffect(() => {
+    if (mode === YOUTUBE_MODE.Download) {
+      const result = ytdl(`http://www.youtube.com/watch?v=${id}`).pipe(
+        fs.createWriteStream(`${filePath}/${id}.mp4`)
+      );
+      result.on("close", () => {
+        //` -i ${filePath}/${id}.mp4 -vf select='between(t,2,6)+between(t,15,24)' -vsync 0 out%d.png`
 
-  const submitHandler = useEventHandler<QPushButtonSignals>(
-    {
-      clicked: (e) => {
-        const res = {
-          id,
-          filePath,
-          mode: mode.Download,
-        };
-        update(res);
-      },
-    },
-    [id, filePath]
-  );
+        // const transcoder = new prism.FFmpeg({
+        //   args: [
+        //     "-vf",
+        //     `select='between(t,2,6)+between(t,15,24)'`,
+        //     "-vsync",
+        //     "0 out%d.png",
+        //   ],
+        // });
 
-  const fileHandler = useEventHandler<QPushButtonSignals>(
-    {
-      clicked: (e) => {
-        const fileDialog = new QFileDialog();
-        fileDialog.setFileMode(FileMode.Directory);
-        fileDialog.exec();
-        const selectedDirectory = fileDialog.selectedFiles();
-        if (selectedDirectory.length > 0) {
-          set_file_path(selectedDirectory[0]);
-        }
-      },
-    },
-    [filePath]
-  );
+        // fs.createReadStream(`${filePath}/${id}.mp4`).pipe(transcoder);
 
-  const setTable = (e: any) => {
-    console.log(e);
-  };
+        console.log("end");
+      });
+    }
+  });
 
   return (
     <View>
@@ -99,33 +61,19 @@ export default function InputData() {
         `}
       >
         <View>
-          <LineEdit
-            on={idChangeHandler}
-            placeholderText={"유투브 아이디 입력"}
-          />
-          <View style={fileStyle}>
-            <LineEdit
-              placeholderText={"저장경로 입력"}
-              text={filePath}
-              readOnly
-            />
-            <Button text={`파일 선택`} on={fileHandler} />
-          </View>
+          <Text>이미지 미리보기</Text>
         </View>
-        <View>
-          <Button
-            text={`시작!`}
-            on={submitHandler}
-            style={`
-            width: 100%;
-            height: 100%;
-        `}
-          />
+        <View style={`flex: 1;`}>
+          <InputYoutubeId />
+          <SetSaveFileSelect />
+        </View>
+        <View style={`width: 100%;`}>
+          <SubmitButton />
         </View>
       </View>
       <View style="border: 1px solid green;">
         <Text>테이블 부분</Text>
-        <View ref={test} style="width: 100%; height : 100%;"></View>
+        <View style="width: 100%; height : 100%;"></View>
       </View>
     </View>
   );
