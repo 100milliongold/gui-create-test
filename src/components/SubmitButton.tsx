@@ -1,9 +1,8 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import { Button, useEventHandler } from "@nodegui/react-nodegui";
-import { RootState } from "../modules";
-import { updateData, YOUTUBE_MODE, Youtube } from "../modules/youtube";
+import { setMode, YOUTUBE_MODE } from "../modules/youtube";
 
 import { QPushButtonSignals } from "@nodegui/nodegui";
 
@@ -11,25 +10,16 @@ type SubmitButtonProps = {};
 
 export const SubmitButton: React.FC<SubmitButtonProps> = ({}) => {
   const dispatch = useDispatch();
-
-  const youtubeInfo = useSelector((state: RootState) => state.youtube);
-  const { id, filePath } = youtubeInfo;
-
-  const update = (data: Youtube) => {
-    dispatch(updateData(data));
+  const set_mode = () => {
+    dispatch(setMode(YOUTUBE_MODE.Download));
   };
   const submitHandler = useEventHandler<QPushButtonSignals>(
     {
       clicked: (e) => {
-        const res = {
-          id,
-          filePath,
-          mode: YOUTUBE_MODE.Download,
-        };
-        update(res);
+        set_mode();
       },
     },
-    [id, filePath]
+    []
   );
 
   return (

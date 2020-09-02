@@ -8,15 +8,23 @@ import { Youtube, YOUTUBE_MODE, updateData } from "../modules/youtube";
 import InputYoutubeId from "../components/InputYoutubeId";
 import SetSaveFileSelect from "../components/SetSaveFileSelect";
 import SubmitButton from "../components/SubmitButton";
+import InputFfmpegPath from "../components/InputFfmpegPath";
 
 import ytdl from "ytdl-core";
-const fs = require("fs");
 
-const prism = require("prism-media");
+// const ffmpegPath = require("@ffmpeg-installer/ffmpeg");
+// const ffprobePath = require("@ffprobe-installer/ffprobe");
+// const ffmpeg = require("fluent-ffmpeg");
+// ffmpeg.setFfmpegPath("../ffmpeg/linux64/ffmpeg");
+// ffmpeg.setFfprobePath(ffprobePath);
+
+const spawn = require("child_process").spawn;
+
+const fs = require("fs");
 
 export default function InputData() {
   const youtubeInfo = useSelector((state: RootState) => state.youtube);
-  const { id, filePath, mode } = youtubeInfo;
+  const { id, filePath, mode, ffmpeg_path } = youtubeInfo;
 
   const dispatch = useDispatch();
 
@@ -26,24 +34,24 @@ export default function InputData() {
 
   useEffect(() => {
     if (mode === YOUTUBE_MODE.Download) {
-      const result = ytdl(`http://www.youtube.com/watch?v=${id}`).pipe(
-        fs.createWriteStream(`${filePath}/${id}.mp4`)
-      );
+      const stream = fs.createWriteStream(`${filePath}/${id}.mp4`);
+
+      const result = ytdl(`http://www.youtube.com/watch?v=${id}`).pipe(stream);
       result.on("close", () => {
         //` -i ${filePath}/${id}.mp4 -vf select='between(t,2,6)+between(t,15,24)' -vsync 0 out%d.png`
 
-        // const transcoder = new prism.FFmpeg({
-        //   args: [
-        //     "-vf",
-        //     `select='between(t,2,6)+between(t,15,24)'`,
-        //     "-vsync",
-        //     "0 out%d.png",
-        //   ],
-        // });
-
-        // fs.createReadStream(`${filePath}/${id}.mp4`).pipe(transcoder);
-
-        console.log("end");
+        const ffmpeg = spawn(ffmpeg_path, [
+          `-i`,
+          `${filePath}/${id}.mp4`,
+          `-vf`,
+          `fps=6/60`,
+          `-vsync`,
+          `0`,
+          `${filePath}/out%d.png`,
+        ]);
+        ffmpeg.on("exit", () => {
+          console.log("end");
+        });
       });
     }
   });
@@ -66,6 +74,7 @@ export default function InputData() {
         <View style={`flex: 1;`}>
           <InputYoutubeId />
           <SetSaveFileSelect />
+          <InputFfmpegPath />
         </View>
         <View style={`width: 100%;`}>
           <SubmitButton />

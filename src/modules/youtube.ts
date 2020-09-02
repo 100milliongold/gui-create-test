@@ -2,6 +2,8 @@ const UPDATE = "youtube/UPDATE" as const;
 const SET_FILE_PATH = "youtube/SET_FILE_PATH" as const;
 const SET_ID = "youtube/SET_ID" as const;
 const SET_FILE_NAME = "youtube/SET_FILE_NAME" as const;
+const SET_MODE = "youtube/SET_MODE" as const;
+const SET_FFMPEG_PATH = "youtube/SET_FFMPEG_PATH" as const;
 
 const RESET = "youtube/RESET" as const;
 
@@ -25,13 +27,24 @@ export const setFilePath = (filePath: string) => ({
   type: SET_FILE_PATH,
   filePath,
 });
+export const setMode = (mode: YOUTUBE_MODE) => ({
+  type: SET_MODE,
+  mode,
+});
+
+export const setFfmpegPath = (ffmpeg_path: string) => ({
+  type: SET_FFMPEG_PATH,
+  ffmpeg_path,
+});
 
 type YoutubeAction =
   | ReturnType<typeof updateData>
   | ReturnType<typeof setFilePath>
   | ReturnType<typeof setFileName>
   | ReturnType<typeof setId>
-  | ReturnType<typeof resetData>;
+  | ReturnType<typeof resetData>
+  | ReturnType<typeof setMode>
+  | ReturnType<typeof setFfmpegPath>;
 
 export enum YOUTUBE_MODE {
   InputData = "INPUT",
@@ -42,12 +55,14 @@ export interface Youtube {
   id: string | undefined;
   filePath: string | undefined;
   mode: YOUTUBE_MODE;
+  ffmpeg_path: string | undefined;
 }
 
 const initialState: Youtube = {
   id: "",
   filePath: "",
   mode: YOUTUBE_MODE.InputData,
+  ffmpeg_path: "",
 };
 
 export function Index(state: Youtube = initialState, action: YoutubeAction) {
@@ -59,6 +74,13 @@ export function Index(state: Youtube = initialState, action: YoutubeAction) {
         id: youtube.id,
         filePath: youtube.filePath,
         mode: youtube.mode,
+      };
+
+    case SET_MODE:
+      const { mode } = action;
+      return {
+        ...state,
+        mode,
       };
 
     case SET_FILE_PATH:
@@ -82,6 +104,12 @@ export function Index(state: Youtube = initialState, action: YoutubeAction) {
         fileName,
       };
 
+    case SET_FFMPEG_PATH:
+      const { ffmpeg_path } = action;
+      return {
+        ...state,
+        ffmpeg_path,
+      };
     case RESET:
       return initialState;
 
